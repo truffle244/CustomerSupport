@@ -1,0 +1,61 @@
+Phase 1
+Create a support agent that will be able to answer any questions based off of these articles
+Chunk articles
+We have an agent that will retrieve relevant chunks and then summarize + cite sources.
+Manual tests
+Phase 2
+Retrieval Evals
+Evaluate: question, chunk, answer dataset. Make Claude autogenerate these. 
+Cost + performance evaluation. Llm as a judge!!!
+Optimise
+
+Phase 3
+Fine tune a model. Try performance before and after.
+Cost + performance eval vs using chatgpt
+
+Blog
+
+we fetch Vagaro's support docs from here https://support.vagaro.com/api/v2/help_center/en-us/articles. (fetch.py)
+
+chunk em with with the following philosophy:  (chunk.py)
+    Short articles (≤ 1500 tokens) → single chunk, done
+    Longer articles → HTML is parsed, split at every H2/H3 heading into sections
+    Sections are greedily merged — consecutive sections get combined until adding the next one would exceed 1500 tokens, then a new chunk starts
+    Tables, iframes, code blocks → always their own standalone chunk, never merged
+    Oversized sections (a single section > 1500 tokens) → sliding token windows of 1500 with 150-token overlap
+
+embed_and_store with (embed_and_store.py)
+    embed and store chunks with openai small embedding into a local chroma db
+
+we can test with retrieve.py
+
+
+next up setting up evals. Since this is a small project, we can just llm generate evals. in a real env, we would have a domain expert come up with a manual dataset. we generate questions off of chunks in (generate_dataset.py)
+Then eval: some 80 questions acc at K and mmr with simple vector retrieval
+	Hit Rate	MRR
+k		
+1	0.667	0.667
+3	0.875	0.762
+5	0.917	0.771
+10	0.931	0.773
+
+increased dataset size to 220 added some weird paraphased questions
+Dense results
+  k        Hit Rate        MRR
+  ----------------------------
+  1           0.640      0.640
+  3           0.833      0.726
+  5           0.892      0.739
+  10          0.919      0.743
+
+--- Hybrid ---
+
+Hybrid results
+  k        Hit Rate        MRR
+  ----------------------------
+  1           0.640      0.640
+  3           0.838      0.727
+  5           0.892      0.740
+  10          0.937      0.747
+
+tbh acc at 5 for dense is the same as hybrid so im just gonna go with dense so we dont have weird latency issues. 
