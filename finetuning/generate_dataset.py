@@ -29,7 +29,7 @@ from openai import OpenAI
 load_dotenv()
 
 RETRIEVAL_DIR = Path(__file__).parent.parent / "retrieval"
-EVALS_DIR = RETRIEVAL_DIR / "evals"
+EVALS_DIR = Path(__file__).parent.parent / "evals"
 sys.path.insert(0, str(RETRIEVAL_DIR))
 sys.path.insert(0, str(EVALS_DIR))
 
@@ -63,7 +63,6 @@ def with_backoff(fn, *args, start=3.0, max_retries=6, **kwargs):
         except openai.RateLimitError:
             if attempt == max_retries - 1:
                 raise
-            print(f"\n  [RATE LIMIT] waiting {wait:.0f}s...")
             time.sleep(wait)
             wait *= 2
 
