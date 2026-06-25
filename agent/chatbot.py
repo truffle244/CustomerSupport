@@ -16,7 +16,7 @@ load_dotenv()
 sys.path.insert(0, str(Path(__file__).parent.parent / "retrieval"))
 from retrieve import get_collection, retrieve  # noqa: E402
 
-CHROMA_PATH = str(Path(__file__).parent.parent / "retrieval" / "chroma_db")
+CHROMA_PATH = str(Path(__file__).parent.parent / "retrieval" / "data" / "chroma_db")
 MODEL = "gpt-4o-mini"
 
 SYSTEM_PROMPT = """You are a helpful Vagaro customer support agent. Vagaro is a business management platform for salons, spas, and fitness businesses.
